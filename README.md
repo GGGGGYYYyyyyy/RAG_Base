@@ -126,8 +126,9 @@ graph TD
     L -- 与大语言模型交互 --> M[智能答案];
 ```
 
-```mermaid
+
 ### 数据预处理与增强流程
+```mermaid
 graph TD
     N[原始文档] --> O["Parser模块 (EnhancedMarkdownParser)"];
     O -- 解析、智能分块、元数据关联 --> P[结构化知识片段];
