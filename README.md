@@ -126,14 +126,14 @@ graph TD
     L -- 与大语言模型交互 --> M[智能答案];
 数据预处理与增强流程
 graph TD
-    N[原始文档] --> O[Parser模块 (EnhancedMarkdownParser)];
+    N[原始文档] --> O["Parser模块 (EnhancedMarkdownParser)"];
     O -- 解析、智能分块、元数据关联 --> P[结构化知识片段];
-    P --> Q[Data_Enhance模块 (问题与主题生成脚本)];
+    P --> Q["Data_Enhance模块 (问题与主题生成脚本)"];
     Q -- LLM生成问题、主题 --> R[增强后的知识片段];
     P --> S[Embedding模块];
     R --> S;
     S -- 生成文本嵌入 --> T[Milvus数据导入脚本];
-    T --> U[向量数据库 (Milvus)];
+    T --> U["向量数据库 (Milvus)"];
     U --> V[内容集合];
     U --> W[问题集合];
 ## 🛠️ 主要模块功能简介
