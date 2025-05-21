@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+pydantic
+pymilvus
+transformers
+torch
+sentence-transformers
+rank_bm25
+jieba
+requests
+python-dotenv
+PyMySQL
+python-multipart
+tiktoken
+# accelerate # 可选，用于优化 Hugging Face 模型性能
+# openai # 可选，如果直接使用 OpenAI API
+# loguru # 可选，作为标准 logging 模块的替代
