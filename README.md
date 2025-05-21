@@ -112,17 +112,17 @@
 ```mermaid
 graph TD
     A[用户查询] --> B{API 服务};
-    B --> C[查询处理器 (AdvancedQAQueryProcessor)];
+    B --> C["查询处理器 (AdvancedQAQueryProcessor)"];
     C -- 生成查询嵌入 --> D[Embedding模块];
-    C --> E{混合检索: 内容知识库};
-    E -- 通过 MilvusManager 访问 --> F[Milvus: 内容集合 (向量+BM25)];
-    C --> G{混合检索: 问题知识库};
-    G -- 通过 MilvusManager 访问 --> H[Milvus: 问题集合 (向量+BM25, 问题由LLM生成)];
-    E --> I[结果融合 (RRF等)];
+    C --> E{"混合检索: 内容知识库"};
+    E -- 通过 MilvusManager 访问 --> F["Milvus: 内容集合 (向量+BM25)"];
+    C --> G{"混合检索: 问题知识库"};
+    G -- 通过 MilvusManager 访问 --> H["Milvus: 问题集合 (向量+BM25, 问题由LLM生成)"];
+    E --> I["结果融合 (RRF等)"];
     G --> I;
-    I --> J([可选] 重排序模块 Reranker);
+    I --> J(["[可选] 重排序模块 Reranker"]);
     J --> K[构建最终上下文];
-    K --> L[LLM响应模块 (LLMHandler)];
+    K --> L["LLM响应模块 (LLMHandler)"];
     L -- 与大语言模型交互 --> M[智能答案];
 数据预处理与增强流程
 graph TD
