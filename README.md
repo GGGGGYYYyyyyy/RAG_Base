@@ -20,7 +20,7 @@
 ### 1. 智能数据预处理与解析 (`<mcfolder name="Parser"></mcfolder>` 模块)
 
 高质量的知识源是RAG系统性能的基石。本项目在数据预处理阶段采用了以下创新方法：
-
+*   首先使用了开源项目mineru将pdf文档转为了markdown。（可以使用docker本地部署也可以使用在线客户端）
 *   **增强型Markdown解析器功能** (核心实现于 `<mcsymbol name="EnhancedMarkdownParser" type="class"></mcsymbol>` 类):
     *   **智能分块 (Intelligent Chunking)**: 采用基于 Markdown 结构（如标题、段落、列表）和自定义分隔符的动态分块策略，确保知识片段的语义完整性，而非简单的固定大小切分。
     *   **标题继承与上下文关联**: 分块时能够自动关联最近的多级标题，为每个知识块补充更丰富的上下文信息，增强其独立可理解性。
