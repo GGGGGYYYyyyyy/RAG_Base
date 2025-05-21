@@ -167,15 +167,12 @@ graph TD
     *   修改项目中的配置文件 (`<mcfolder name="Config"></mcfolder>` 模块下的配置文件)，指定正确的模型路径/标识、Milvus 服务地址、LLM API 密钥及端点信息等。
 
 3.  **数据处理与入库**:
-    *   **准备原始数据**: 将您的 Markdown 文档或其他格式的文档放入指定的数据目录。
+    *   **准备原始数据**: 将您的 Markdown 文档或其他格式的文档放入指定的数据目录。（使用了基于docker部署的mineru，将pdf转为markdown）
     *   **解析与分块**: 运行 `<mcfolder name="Parser"></mcfolder>` 模块的相关脚本，处理您的原始文档，生成结构化的数据。
-        ```bash
-       
+        
     *   **(关键步骤) 数据增强**: 运行 `<mcfolder name="Data_Enhance"></mcfolder>` 模块中的脚本（如 `add_question.py`, `add_topic.py`），为解析后的数据生成问题和主题。
-        ```bash
         
     *   **数据导入 Milvus**: 运行数据导入脚本 (通常在 `<mcfolder name="Milvus_DB"></mcfolder>` 模块或项目根目录的脚本中提供)，将处理并增强后的数据及其向量嵌入导入到 Milvus 数据库中。
-        ```bash
 
 4.  **启动服务**:
     *   运行 API 服务的主程序文件 (通常使用 Uvicorn)。
