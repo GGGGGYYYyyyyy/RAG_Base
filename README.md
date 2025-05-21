@@ -1,10 +1,23 @@
-# RAG 智能问答系统
+# RAG 智能问答系统 (RAG Intelligent Q&A System)
 
-本项目是一个基于检索增强生成 (Retrieval Augmented Generation, RAG) 范式的智能问答系统。它旨在通过结合先进的文档解析、高效的向量检索技术以及强大的大型语言模型 (LLM) 来提供精准、相关的答案。系统的核心创新在于其精细化的数据预处理流程和复杂的多阶段混合检索策略。
+本项目是一个基于检索增强生成 (Retrieval Augmented Generation, RAG) 范式的先进智能问答系统。它融合了精细的文档解析、高效的向量检索技术以及强大的大型语言模型 (LLM)，旨在提供精准、相关的答案。系统的核心创新在于其精细化的数据预处理流程和复杂的多阶段混合检索策略，致力于从海量知识中挖掘深度见解。
+
+## 目录
+*   [✨ 核心功能与创新点](#-核心功能与创新点)
+    *   [1. 智能数据预处理与解析](#1-智能数据预处理与解析-mcfolder-nameparser-模块)
+    *   [2. 先进的多阶段混合检索策略](#2-先进的多阶段混合检索策略-mcfolder-namequery-与-mcfolder-namemilvus_db-模块)
+    *   [3. 模块化与可配置性](#3-模块化与可配置性)
+*   [🚀 系统架构概览](#-系统架构概览)
+    *   [问答流程](#问答流程)
+    *   [数据预处理与增强流程](#数据预处理与增强流程)
+*   [🛠️ 主要模块功能简介](#️-主要模块功能简介)
+*   [⚙️ 快速开始](#️-快速开始)
+*   [🤝 贡献](#-贡献)
+*   [📄 许可证](#-许可证)
 
 ## ✨ 核心功能与创新点
 
-### 1. 智能数据预处理与解析 (<mcfolder name="Parser"></mcfolder> 模块)
+### 1. 智能数据预处理与解析 (`<mcfolder name="Parser"></mcfolder>` 模块)
 
 高质量的知识源是RAG系统性能的基石。本项目在数据预处理阶段采用了以下创新方法：
 
@@ -18,7 +31,7 @@
     *   在文本送入 BM25 索引或进行某些分析前，进行标准化处理，如转小写、去除多余空格。
     *   支持停用词移除，以优化关键词检索的准确性。
 
-### 2. 先进的多阶段混合检索策略 (<mcfolder name="Query"></mcfolder> 与 <mcfolder name="Milvus_DB"></mcfolder> 模块)
+### 2. 先进的多阶段混合检索策略 (`<mcfolder name="Query"></mcfolder>` 与 `<mcfolder name="Milvus_DB"></mcfolder>` 模块)
 
 为了从海量知识中高效准确地召回最相关的上下文信息，系统采用了复杂且强大的混合检索机制。
 
@@ -26,7 +39,7 @@
 
 系统同时维护两个主要的知识集合，均存储于 Milvus 向量数据库中：
 *   **内容集合 (Content Collection)**: 存储从原始文档（如Markdown文件）解析出的、经过分块处理的知识片段。这是系统主要的知识来源。
-*   **问题集合 (Questions Collection)**: 存储高质量的问答对。这些问答对主要通过 **<mcfolder name="Data_Enhance"></mcfolder> 模块**（例如，使用 `<mcsymbol name="generate_rag_questions" filename="add_question.py" type="function"></mcsymbol>` 函数并通过名为 `add_question` 的脚本调用）**利用大型语言模型 (LLM) 和精心设计的提示词 (Prompts) 针对内容集合中的每个知识片段自动生成**。这些提示词经过特别设计，旨在引导LLM从不同角度、针对不同信息点提出多样化且与原文紧密相关的问题。此外，问题集合也可以包含部分预先定义或从用户交互中积累的问答对。每个问答对通常包含一个或多个针对特定知识点的问题、以及指向内容集合中对应知识片段的引用 (如 `chunk_id`)。这种方式旨在为每个知识点生成多样化、高质量的潜在查询，从而提升检索的覆盖面和准确性。类似地，<mcfolder name="Data_Enhance"></mcfolder> 中的名为 `add_topic` 的脚本也使用LLM（通过 `<mcsymbol name="generate_rag_topic" filename="add_topic.py" type="function"></mcsymbol>` 函数）为知识片段生成核心主题句，进一步增强其可检索性。
+*   **问题集合 (Questions Collection)**: 存储高质量的问答对。这些问答对主要通过 **`<mcfolder name="Data_Enhance"></mcfolder>` 模块**（例如，使用 `<mcsymbol name="generate_rag_questions" filename="add_question.py" type="function"></mcsymbol>` 函数并通过名为 `add_question` 的脚本调用）**利用大型语言模型 (LLM) 和精心设计的提示词 (Prompts) 针对内容集合中的每个知识片段自动生成**。这些提示词经过特别设计，旨在引导LLM从不同角度、针对不同信息点提出多样化且与原文紧密相关的问题。此外，问题集合也可以包含部分预先定义或从用户交互中积累的问答对。每个问答对通常包含一个或多个针对特定知识点的问题、以及指向内容集合中对应知识片段的引用 (如 `chunk_id`)。这种方式旨在为每个知识点生成多样化、高质量的潜在查询，从而提升检索的覆盖面和准确性。类似地，`<mcfolder name="Data_Enhance"></mcfolder>` 中的名为 `add_topic` 的脚本也使用LLM（通过 `<mcsymbol name="generate_rag_topic" filename="add_topic.py" type="function"></mcsymbol>` 函数）为知识片段生成核心主题句，进一步增强其可检索性。
 
 #### 2.2 基础检索单元：混合检索
 
@@ -53,7 +66,7 @@
     *   可选参数: `top_k` (最终返回结果数量), `filters_expr_content` (内容集合的元数据过滤条件), `filters_expr_question` (问题集合的元数据过滤条件), 以及控制各阶段检索和融合行为的权重参数 (如 `content_vector_w`, `question_bm25_w` 等)。
 
 2.  **查询向量化**:
-    *   使用 <mcfolder name="Embedding"></mcfolder> 模块将用户输入的 `query_text` 转换为查询嵌入向量，供后续的向量检索使用。
+    *   使用 `<mcfolder name="Embedding"></mcfolder>` 模块将用户输入的 `query_text` 转换为查询嵌入向量，供后续的向量检索使用。
 
 3.  **并行检索阶段**:
     *   **内容集合检索**:
@@ -79,7 +92,7 @@
 6.  **输出**:
     *   经过上述多阶段检索和融合后，生成一个最终的、排序后的候选上下文列表。这个列表中的上下文片段被认为是与用户查询最相关的，将用于后续的答案生成。
 
-#### 2.4 可选的重排序 (<mcfolder name="ReRank"></mcfolder> 模块)
+#### 2.4 可选的重排序 (`<mcfolder name="ReRank"></mcfolder>` 模块)
 
 在获得初步的候选上下文列表后，系统还支持引入一个独立的**重排序模型** (`<mcsymbol name="Reranker" type="class"></mcsymbol>` 类)。
 *   **作用**: 重排序模型通常是更复杂的深度学习模型，它接收查询和候选上下文对，并对上下文的相关性进行更精细的打分和排序。
@@ -88,78 +101,98 @@
 
 ### 3. 模块化与可配置性
 
-*   **清晰的模块划分**: 项目结构清晰，各功能模块（如 <mcfolder name="Parser"></mcfolder>, <mcfolder name="Embedding"></mcfolder>, <mcfolder name="Milvus_DB"></mcfolder>, <mcfolder name="Query"></mcfolder>, <mcfolder name="ReRank"></mcfolder>, <mcfolder name="LLM_Response"></mcfolder>, <mcfolder name="Data_Enhance"></mcfolder>）职责分明，易于理解和维护。
+*   **清晰的模块划分**: 项目结构清晰，各功能模块（如 `<mcfolder name="Parser"></mcfolder>`, `<mcfolder name="Embedding"></mcfolder>`, `<mcfolder name="Milvus_DB"></mcfolder>`, `<mcfolder name="Query"></mcfolder>`, `<mcfolder name="ReRank"></mcfolder>`, `<mcfolder name="LLM_Response"></mcfolder>`, `<mcfolder name="Data_Enhance"></mcfolder>`）职责分明，易于理解和维护。
 *   **配置驱动**: 核心参数（如模型标识、数据库连接信息、检索调优参数等）均通过集中的配置文件进行管理，方便调整和部署。
-*   **数据增强工具 (<mcfolder name="Data_Enhance"></mcfolder> 模块)**: 提供了如名为 `add_question` 和 `add_topic` 的脚本，利用LLM为知识片段自动生成高质量的问题和主题句，极大丰富了知识库的可检索性，是提升系统性能的关键环节。
+*   **数据增强工具 (`<mcfolder name="Data_Enhance"></mcfolder>` 模块)**: 提供了如名为 `add_question` 和 `add_topic` 的脚本，利用LLM为知识片段自动生成高质量的问题和主题句，极大丰富了知识库的可检索性，是提升系统性能的关键环节。
 
-## 🚀 系统架构概览 (功能流)
+## 🚀 系统架构概览
 
-```
-用户查询 --> API服务 (接收与分发)
-             |
-             v
-查询处理器 (AdvancedQAQueryProcessor) --[生成查询嵌入]--> Embedding模块
-             |
-             +--[混合检索]--> 内容知识库 (通过 MilvusManager 访问)
-             |                 (向量搜索 + BM25)
-             |
-             +--[混合检索]--> 问题知识库 (通过 MilvusManager 访问)
-             |                 (向量搜索 + BM25, 问题由LLM生成)
-             |
-             v
-结果融合 (RRF等策略，多阶段) --> [可选] 重排序模块 (Reranker)
-             |
-             v
-构建最终上下文 --> LLM响应模块 (LLMHandler，与大语言模型交互)
-             |
-             v
-           智能答案
-```
+### 问答流程
 
-文档预处理与数据增强流程 (功能流):
-```
-原始文档 --> Parser模块 (EnhancedMarkdownParser)
-              | (解析、智能分块、元数据关联)
-              v
-           结构化知识片段 --> Data_Enhance模块 (问题与主题生成脚本)
-              |                            | (LLM生成问题、主题)
-              |                            v
-              |                       增强后的知识片段
-              |
-              v
-Embedding模块 --[生成文本嵌入]--> Milvus数据导入脚本
-                                 |
-                                 v
-                         向量数据库 (Milvus)
-                         (内容集合、问题集合)
-```
-
-## 🛠️ 主要模块功能简介
-
-*   **<mcfolder name="Parser"></mcfolder> 模块**: 负责将原始文档（特别是Markdown）解析、清洗、并进行智能分块，提取元数据，为后续的嵌入和检索做准备。核心是 `<mcsymbol name="EnhancedMarkdownParser" type="class"></mcsymbol>` 类。
-*   **<mcfolder name="Embedding"></mcfolder> 模块**: 负责将文本数据转换为向量嵌入。核心是 `<mcsymbol name="EmbeddingGenerator" type="class"></mcsymbol>` 类，支持加载和使用各种预训练的嵌入模型。
-*   **<mcfolder name="Milvus_DB"></mcfolder> 模块**: 封装了与 Milvus 向量数据库的所有交互。核心是 `<mcsymbol name="MilvusManager" type="class"></mcsymbol>` 类，提供集合创建、数据增删改查、向量搜索、BM25搜索及混合搜索等功能。一个专门的脚本用于初始化数据库和批量导入数据。
-*   **<mcfolder name="Query"></mcfolder> 模块**: 实现复杂查询处理逻辑的核心。`<mcsymbol name="AdvancedQAQueryProcessor" type="class"></mcsymbol>` 类编排了多阶段、跨集合的混合检索流程。
-*   **<mcfolder name="ReRank"></mcfolder> 模块**: 提供重排序功能，使用专门的重排序模型对初步检索到的上下文进行二次精排。核心是 `<mcsymbol name="Reranker" type="class"></mcsymbol>` 类。
-*   **<mcfolder name="LLM_Response"></mcfolder> 模块**: 负责与大语言模型 (LLM) 进行交互。`<mcsymbol name="LLMHandler" type="class"></mcsymbol>` 类构建发送给 LLM 的 Prompt (包含查询和检索到的上下文)，并处理 LLM 返回的响应，支持流式和非流式输出。
-*   **<mcfolder name="Data_Enhance"></mcfolder> 模块**: 包含用于数据增强的辅助脚本。核心功能是利用LLM和精心设计的提示词，为每个知识片段自动生成多样化的问题（通过名为 `add_question` 的脚本中的 `<mcsymbol name="generate_rag_questions" type="function"></mcsymbol>` 函数）和核心主题句（通过名为 `add_topic` 的脚本中的 `<mcsymbol name="generate_rag_topic" type="function"></mcsymbol>` 函数），这些生成的内容会被添加到知识片段的元数据中，并用于构建问题知识库，从而显著提升检索效果。
-*   **<mcfolder name="Config"></mcfolder> 模块**: 集中管理项目的所有配置信息，如模型标识、API密钥、数据库地址、检索参数等。
-*   **API 服务**: 基于 FastAPI 构建的Web服务入口，对外提供问答API接口，接收用户请求，调用后端服务，并返回结果。
-
-## ⚙️ 运行与使用简述
-
-1.  **环境准备**: 安装 Python 及所有必要的依赖库 (通常通过项目依赖文件)。确保 Milvus 服务已启动并可访问。
-2.  **配置系统**: 修改项目中的配置文件，指定正确的模型设置、Milvus 服务地址、LLM API 信息等。
-3.  **数据处理与入库**:
-    *   使用 <mcfolder name="Parser"></mcfolder> 模块处理您的原始文档，生成结构化的数据。
-    *   （关键步骤）运行 <mcfolder name="Data_Enhance"></mcfolder> 模块中的脚本（如问题生成脚本、主题生成脚本），为解析后的数据生成问题和主题。
-    *   运行数据导入脚本，将处理并增强后的数据及其向量嵌入导入到 Milvus 数据库中。
-4.  **启动服务**: 运行 API 服务的主程序文件 (通常使用 Uvicorn)。
-5.  **发起查询**: 通过 API 接口 (如 `/query`) 发送查询请求。
-
-## 🤝 贡献
-
-欢迎对本项目提出改进意见或贡献代码。
-
-## 📄 许可证
-若要使用请联系作者
+```mermaid
+graph TD
+    A[用户查询] --> B{API 服务};
+    B --> C[查询处理器 (AdvancedQAQueryProcessor)];
+    C -- 生成查询嵌入 --> D[Embedding模块];
+    C --> E{混合检索: 内容知识库};
+    E -- 通过 MilvusManager 访问 --> F[Milvus: 内容集合 (向量+BM25)];
+    C --> G{混合检索: 问题知识库};
+    G -- 通过 MilvusManager 访问 --> H[Milvus: 问题集合 (向量+BM25, 问题由LLM生成)];
+    E --> I[结果融合 (RRF等)];
+    G --> I;
+    I --> J([可选] 重排序模块 Reranker);
+    J --> K[构建最终上下文];
+    K --> L[LLM响应模块 (LLMHandler)];
+    L -- 与大语言模型交互 --> M[智能答案];
+Use code with caution.
+Markdown
+数据预处理与增强流程
+graph TD
+    N[原始文档] --> O[Parser模块 (EnhancedMarkdownParser)];
+    O -- 解析、智能分块、元数据关联 --> P[结构化知识片段];
+    P --> Q[Data_Enhance模块 (问题与主题生成脚本)];
+    Q -- LLM生成问题、主题 --> R[增强后的知识片段];
+    P --> S[Embedding模块];
+    R --> S;
+    S -- 生成文本嵌入 --> T[Milvus数据导入脚本];
+    T --> U[向量数据库 (Milvus)];
+    U --> V[内容集合];
+    U --> W[问题集合];
+Use code with caution.
+Mermaid
+🛠️ 主要模块功能简介
+<mcfolder name="Parser"></mcfolder> 模块: 负责将原始文档（特别是Markdown）解析、清洗、并进行智能分块，提取元数据，为后续的嵌入和检索做准备。核心是 <mcsymbol name="EnhancedMarkdownParser" type="class"></mcsymbol> 类。
+<mcfolder name="Embedding"></mcfolder> 模块: 负责将文本数据转换为向量嵌入。核心是 <mcsymbol name="EmbeddingGenerator" type="class"></mcsymbol> 类，支持加载和使用各种预训练的嵌入模型。
+<mcfolder name="Milvus_DB"></mcfolder> 模块: 封装了与 Milvus 向量数据库的所有交互。核心是 <mcsymbol name="MilvusManager" type="class"></mcsymbol> 类，提供集合创建、数据增删改查、向量搜索、BM25搜索及混合搜索等功能。
+<mcfolder name="Query"></mcfolder> 模块: 实现复杂查询处理逻辑的核心。<mcsymbol name="AdvancedQAQueryProcessor" type="class"></mcsymbol> 类编排了多阶段、跨集合的混合检索流程。
+<mcfolder name="ReRank"></mcfolder> 模块: 提供重排序功能，使用专门的重排序模型对初步检索到的上下文进行二次精排。核心是 <mcsymbol name="Reranker" type="class"></mcsymbol> 类。
+<mcfolder name="LLM_Response"></mcfolder> 模块: 负责与大语言模型 (LLM) 进行交互。<mcsymbol name="LLMHandler" type="class"></mcsymbol> 类构建发送给 LLM 的 Prompt (包含查询和检索到的上下文)，并处理 LLM 返回的响应，支持流式和非流式输出。
+<mcfolder name="Data_Enhance"></mcfolder> 模块: 包含用于数据增强的辅助脚本。核心功能是利用LLM和精心设计的提示词，为每个知识片段自动生成多样化的问题（通过名为 add_question 的脚本中的 <mcsymbol name="generate_rag_questions" type="function"></mcsymbol> 函数）和核心主题句（通过名为 add_topic 的脚本中的 <mcsymbol name="generate_rag_topic" type="function"></mcsymbol> 函数）。这些生成的内容会被添加到知识片段的元数据中，并用于构建问题知识库，从而显著提升检索效果。
+<mcfolder name="Config"></mcfolder> 模块: 集中管理项目的所有配置信息，如模型路径/标识、API密钥、数据库地址、检索参数等。
+API 服务: (通常基于 FastAPI) 构建的Web服务入口，对外提供问答API接口，接收用户请求，调用后端服务，并返回结果。
+⚙️ 快速开始
+环境准备:
+安装 Python (推荐 3.8 或更高版本)。
+确保 Milvus 服务已启动并可访问。参考 Milvus 官方文档 进行安装和启动。
+配置系统:
+复制或重命名配置文件模板 (例如 config_template.yaml 到 config.yaml)。
+修改项目中的配置文件 (<mcfolder name="Config"></mcfolder> 模块下的配置文件)，指定正确的模型路径/标识、Milvus 服务地址、LLM API 密钥及端点信息等。
+数据处理与入库:
+准备原始数据: 将您的 Markdown 文档或其他格式的文档放入指定的数据目录。
+解析与分块: 运行 <mcfolder name="Parser"></mcfolder> 模块的相关脚本，处理您的原始文档，生成结构化的数据。
+# 示例命令 (具体请根据您的项目脚本调整)
+python -m Parser.main --input_dir path/to/your/docs --output_dir path/to/parsed_data
+Use code with caution.
+Bash
+(关键步骤) 数据增强: 运行 <mcfolder name="Data_Enhance"></mcfolder> 模块中的脚本（如 add_question.py, add_topic.py），为解析后的数据生成问题和主题。
+# 示例命令 (具体请根据您的项目脚本调整)
+python -m Data_Enhance.add_question --data_path path/to/parsed_data --llm_config path/to/llm_config.yaml
+python -m Data_Enhance.add_topic --data_path path/to/parsed_data --llm_config path/to/llm_config.yaml
+Use code with caution.
+Bash
+数据导入 Milvus: 运行数据导入脚本 (通常在 <mcfolder name="Milvus_DB"></mcfolder> 模块或项目根目录的脚本中提供)，将处理并增强后的数据及其向量嵌入导入到 Milvus 数据库中。
+# 示例命令 (具体请根据您的项目脚本调整)
+python scripts/import_to_milvus.py --data_path path/to/enhanced_data --config_path path/to/config.yaml
+Use code with caution.
+Bash
+启动服务:
+运行 API 服务的主程序文件 (通常使用 Uvicorn)。
+# 示例命令 (假设您的 FastAPI 应用实例在 main.py 中的 app)
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+Use code with caution.
+Bash
+发起查询:
+通过 API 接口 (如 /query 或 /v1/chat/completions，取决于您的 API 设计) 发送查询请求。
+可以使用 Postman, curl 或任何 HTTP 客户端进行测试。
+curl -X POST "http://localhost:8000/query" \
+     -H "Content-Type: application/json" \
+     -d '{"query_text": "什么是RAG系统？"}'
+Use code with caution.
+Bash
+🤝 贡献
+我们非常欢迎对本项目的贡献！如果您有任何改进意见、功能建议或发现了bug，请随时通过以下方式参与：
+提交 Issues: 报告 Bug 或提出功能需求。
+Pull Requests: 提交您的代码贡献。请确保您的代码遵循项目编码规范，并包含必要的测试。
+建议先创建一个 Issue 来讨论您想要做的更改。
+📄 许可证
+本项目采用 MIT 许可证 / Apache 2.0 许可证 / (请选择一个合适的开源许可证并在此处声明，同时在项目中包含一个 LICENSE 文件)。
