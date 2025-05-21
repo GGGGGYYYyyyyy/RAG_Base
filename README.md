@@ -124,8 +124,6 @@ graph TD
     J --> K[构建最终上下文];
     K --> L[LLM响应模块 (LLMHandler)];
     L -- 与大语言模型交互 --> M[智能答案];
-Use code with caution.
-Markdown
 数据预处理与增强流程
 graph TD
     N[原始文档] --> O[Parser模块 (EnhancedMarkdownParser)];
@@ -138,61 +136,59 @@ graph TD
     T --> U[向量数据库 (Milvus)];
     U --> V[内容集合];
     U --> W[问题集合];
-Use code with caution.
-Mermaid
-🛠️ 主要模块功能简介
-<mcfolder name="Parser"></mcfolder> 模块: 负责将原始文档（特别是Markdown）解析、清洗、并进行智能分块，提取元数据，为后续的嵌入和检索做准备。核心是 <mcsymbol name="EnhancedMarkdownParser" type="class"></mcsymbol> 类。
-<mcfolder name="Embedding"></mcfolder> 模块: 负责将文本数据转换为向量嵌入。核心是 <mcsymbol name="EmbeddingGenerator" type="class"></mcsymbol> 类，支持加载和使用各种预训练的嵌入模型。
-<mcfolder name="Milvus_DB"></mcfolder> 模块: 封装了与 Milvus 向量数据库的所有交互。核心是 <mcsymbol name="MilvusManager" type="class"></mcsymbol> 类，提供集合创建、数据增删改查、向量搜索、BM25搜索及混合搜索等功能。
-<mcfolder name="Query"></mcfolder> 模块: 实现复杂查询处理逻辑的核心。<mcsymbol name="AdvancedQAQueryProcessor" type="class"></mcsymbol> 类编排了多阶段、跨集合的混合检索流程。
-<mcfolder name="ReRank"></mcfolder> 模块: 提供重排序功能，使用专门的重排序模型对初步检索到的上下文进行二次精排。核心是 <mcsymbol name="Reranker" type="class"></mcsymbol> 类。
-<mcfolder name="LLM_Response"></mcfolder> 模块: 负责与大语言模型 (LLM) 进行交互。<mcsymbol name="LLMHandler" type="class"></mcsymbol> 类构建发送给 LLM 的 Prompt (包含查询和检索到的上下文)，并处理 LLM 返回的响应，支持流式和非流式输出。
-<mcfolder name="Data_Enhance"></mcfolder> 模块: 包含用于数据增强的辅助脚本。核心功能是利用LLM和精心设计的提示词，为每个知识片段自动生成多样化的问题（通过名为 add_question 的脚本中的 <mcsymbol name="generate_rag_questions" type="function"></mcsymbol> 函数）和核心主题句（通过名为 add_topic 的脚本中的 <mcsymbol name="generate_rag_topic" type="function"></mcsymbol> 函数）。这些生成的内容会被添加到知识片段的元数据中，并用于构建问题知识库，从而显著提升检索效果。
-<mcfolder name="Config"></mcfolder> 模块: 集中管理项目的所有配置信息，如模型路径/标识、API密钥、数据库地址、检索参数等。
-API 服务: (通常基于 FastAPI) 构建的Web服务入口，对外提供问答API接口，接收用户请求，调用后端服务，并返回结果。
-⚙️ 快速开始
-环境准备:
-安装 Python (推荐 3.8 或更高版本)。
-确保 Milvus 服务已启动并可访问。参考 Milvus 官方文档 进行安装和启动。
-配置系统:
-复制或重命名配置文件模板 (例如 config_template.yaml 到 config.yaml)。
-修改项目中的配置文件 (<mcfolder name="Config"></mcfolder> 模块下的配置文件)，指定正确的模型路径/标识、Milvus 服务地址、LLM API 密钥及端点信息等。
-数据处理与入库:
-准备原始数据: 将您的 Markdown 文档或其他格式的文档放入指定的数据目录。
-解析与分块: 运行 <mcfolder name="Parser"></mcfolder> 模块的相关脚本，处理您的原始文档，生成结构化的数据。
-# 示例命令 (具体请根据您的项目脚本调整)
-python -m Parser.main --input_dir path/to/your/docs --output_dir path/to/parsed_data
-Use code with caution.
-Bash
-(关键步骤) 数据增强: 运行 <mcfolder name="Data_Enhance"></mcfolder> 模块中的脚本（如 add_question.py, add_topic.py），为解析后的数据生成问题和主题。
-# 示例命令 (具体请根据您的项目脚本调整)
-python -m Data_Enhance.add_question --data_path path/to/parsed_data --llm_config path/to/llm_config.yaml
-python -m Data_Enhance.add_topic --data_path path/to/parsed_data --llm_config path/to/llm_config.yaml
-Use code with caution.
-Bash
-数据导入 Milvus: 运行数据导入脚本 (通常在 <mcfolder name="Milvus_DB"></mcfolder> 模块或项目根目录的脚本中提供)，将处理并增强后的数据及其向量嵌入导入到 Milvus 数据库中。
-# 示例命令 (具体请根据您的项目脚本调整)
-python scripts/import_to_milvus.py --data_path path/to/enhanced_data --config_path path/to/config.yaml
-Use code with caution.
-Bash
-启动服务:
-运行 API 服务的主程序文件 (通常使用 Uvicorn)。
-# 示例命令 (假设您的 FastAPI 应用实例在 main.py 中的 app)
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-Use code with caution.
-Bash
-发起查询:
-通过 API 接口 (如 /query 或 /v1/chat/completions，取决于您的 API 设计) 发送查询请求。
-可以使用 Postman, curl 或任何 HTTP 客户端进行测试。
-curl -X POST "http://localhost:8000/query" \
-     -H "Content-Type: application/json" \
-     -d '{"query_text": "什么是RAG系统？"}'
-Use code with caution.
-Bash
-🤝 贡献
-我们非常欢迎对本项目的贡献！如果您有任何改进意见、功能建议或发现了bug，请随时通过以下方式参与：
-提交 Issues: 报告 Bug 或提出功能需求。
-Pull Requests: 提交您的代码贡献。请确保您的代码遵循项目编码规范，并包含必要的测试。
-建议先创建一个 Issue 来讨论您想要做的更改。
-📄 许可证
-本项目采用 MIT 许可证 / Apache 2.0 许可证 / (请选择一个合适的开源许可证并在此处声明，同时在项目中包含一个 LICENSE 文件)。
+## 🛠️ 主要模块功能简介
+
+*   **`<mcfolder name="Parser"></mcfolder>` 模块**: 负责将原始文档（特别是Markdown）解析、清洗、并进行智能分块，提取元数据，为后续的嵌入和检索做准备。核心是 `<mcsymbol name="EnhancedMarkdownParser" type="class"></mcsymbol>` 类。
+*   **`<mcfolder name="Embedding"></mcfolder>` 模块**: 负责将文本数据转换为向量嵌入。核心是 `<mcsymbol name="EmbeddingGenerator" type="class"></mcsymbol>` 类，支持加载和使用各种预训练的嵌入模型。
+*   **`<mcfolder name="Milvus_DB"></mcfolder>` 模块**: 封装了与 Milvus 向量数据库的所有交互。核心是 `<mcsymbol name="MilvusManager" type="class"></mcsymbol>` 类，提供集合创建、数据增删改查、向量搜索、BM25搜索及混合搜索等功能。
+*   **`<mcfolder name="Query"></mcfolder>` 模块**: 实现复杂查询处理逻辑的核心。`<mcsymbol name="AdvancedQAQueryProcessor" type="class"></mcsymbol>` 类编排了多阶段、跨集合的混合检索流程。
+*   **`<mcfolder name="ReRank"></mcfolder>` 模块**: 提供重排序功能，使用专门的重排序模型对初步检索到的上下文进行二次精排。核心是 `<mcsymbol name="Reranker" type="class"></mcsymbol>` 类。
+*   **`<mcfolder name="LLM_Response"></mcfolder>` 模块**: 负责与大语言模型 (LLM) 进行交互。`<mcsymbol name="LLMHandler" type="class"></mcsymbol>` 类构建发送给 LLM 的 Prompt (包含查询和检索到的上下文)，并处理 LLM 返回的响应，支持流式和非流式输出。
+*   **`<mcfolder name="Data_Enhance"></mcfolder>` 模块**: 包含用于数据增强的辅助脚本。核心功能是利用LLM和精心设计的提示词，为每个知识片段自动生成多样化的问题（通过名为 `add_question` 的脚本中的 `<mcsymbol name="generate_rag_questions" type="function"></mcsymbol>` 函数）和核心主题句（通过名为 `add_topic` 的脚本中的 `<mcsymbol name="generate_rag_topic" type="function"></mcsymbol>` 函数）。这些生成的内容会被添加到知识片段的元数据中，并用于构建问题知识库，从而显著提升检索效果。
+*   **`<mcfolder name="Config"></mcfolder>` 模块**: 集中管理项目的所有配置信息，如模型路径/标识、API密钥、数据库地址、检索参数等。
+*   **API 服务**: (通常基于 FastAPI) 构建的Web服务入口，对外提供问答API接口，接收用户请求，调用后端服务，并返回结果。
+
+## ⚙️ 快速开始
+
+1.  **环境准备**:
+    *   安装 Python (推荐 3.8 或更高版本)。
+    *   安装所有必要的依赖库: `pip install -r requirements.txt` 。
+    *   确保 Milvus 服务已启动并可访问。参考 [Milvus 官方文档](https://milvus.io/docs) 进行安装和启动。
+
+2.  **配置系统**:
+    *   复制或重命名配置文件模板 (例如 `config.py`)。
+    *   修改项目中的配置文件 (`<mcfolder name="Config"></mcfolder>` 模块下的配置文件)，指定正确的模型路径/标识、Milvus 服务地址、LLM API 密钥及端点信息等。
+
+3.  **数据处理与入库**:
+    *   **准备原始数据**: 将您的 Markdown 文档或其他格式的文档放入指定的数据目录。
+    *   **解析与分块**: 运行 `<mcfolder name="Parser"></mcfolder>` 模块的相关脚本，处理您的原始文档，生成结构化的数据。
+        ```bash
+       
+    *   **(关键步骤) 数据增强**: 运行 `<mcfolder name="Data_Enhance"></mcfolder>` 模块中的脚本（如 `add_question.py`, `add_topic.py`），为解析后的数据生成问题和主题。
+        ```bash
+        
+    *   **数据导入 Milvus**: 运行数据导入脚本 (通常在 `<mcfolder name="Milvus_DB"></mcfolder>` 模块或项目根目录的脚本中提供)，将处理并增强后的数据及其向量嵌入导入到 Milvus 数据库中。
+        ```bash
+
+4.  **启动服务**:
+    *   运行 API 服务的主程序文件 (通常使用 Uvicorn)。
+        ```bash
+        # 示例命令 (假设您的 FastAPI 应用实例在 main.py 中的 app)
+        uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+        ```
+
+5.  **发起查询**:
+    *   通过 API 接口 (如 `/query` 或 `/v1/chat/completions`，取决于您的 API 设计) 发送查询请求。
+    *   可以使用 Postman, curl 或任何 HTTP 客户端进行测试。
+        ```bash
+        curl -X POST "http://localhost:8000/query" \
+             -H "Content-Type: application/json" \
+             -d '{"query_text": "什么是RAG系统？"}'
+        ```
+
+## 🤝 贡献
+
+我非常欢迎对本项目的贡献！如果您有任何改进意见、功能建议或发现了bug，请随时通过以下方式参与：
+
+*   **提交 Issues**: 报告 Bug 或提出功能需求。
+*   **Pull Requests**: 提交您的代码贡献。请确保您的代码遵循项目编码规范，并包含必要的测试。
